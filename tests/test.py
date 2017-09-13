@@ -1,5 +1,5 @@
 from incapsula import API
-from unittest import mock
+import mock
 import os
 import yaml
 
