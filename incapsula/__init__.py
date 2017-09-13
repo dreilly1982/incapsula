@@ -17,7 +17,7 @@ class API(object):
     def __init__(self, **kwargs):
         cfg_file = os.path.join(os.curdir, 'incapsula.yaml')
         if os.path.isfile(cfg_file):
-            self.__load_cfg(cfg_file)
+            self.load_cfg(cfg_file)
 
         for key, value in kwargs.items():
             if key == 'url':
@@ -42,7 +42,7 @@ class API(object):
         self.payload = {'api_id': self.api_id,
                         'api_key': self.api_key}
 
-    def __load_cfg(self, cfg_file):
+    def load_cfg(self, cfg_file):
         with open(cfg_file, 'r') as f:
             cfg = yaml.load(f)
 
@@ -61,16 +61,16 @@ class API(object):
                             if ssl_key == 'ignore_ssl_warnings':
                                 self.ignore_ssl_warnings = ssl_value
 
-    def __url(self, path):
+    def get_url(self, path):
         ret_url = self.url[:-1] if self.url.endswith('/') else self.url
         return ret_url + path
 
-    def __update_acl(self, payload):
-        resp = self.__send_request(self.__url('/sites/configure/acl'),
-                                   data=payload)
+    def update_acl(self, payload):
+        resp = self.send_request(self.get_url('/sites/configure/acl'),
+                                 data=payload)
         return resp
 
-    def __send_request(self, url, data):
+    def send_request(self, url, data):
         resp = self.session.post(url, data=data)
         if resp.status_code != 200:
             raise Exception('POST {}/ {}'.format(resp.url, resp.status_code))
@@ -87,14 +87,14 @@ class API(object):
             return None
 
     def get_sites(self):
-        resp = self.__send_request(self.__url('/sites/list'),
-                                   data=self.payload)
+        resp = self.send_request(self.get_url('/sites/list'),
+                                 data=self.payload)
         return resp
 
     def get_site_status(self, site_id):
         payload = self.payload
         payload.update({'site_id': site_id})
-        resp = self.__send_request(self.__url('/sites/status'), data=payload)
+        resp = self.send_request(self.get_url('/sites/status'), data=payload)
         return resp
 
     def overwrite_ip_blacklist_acl(self, site_id, ips=[]):
@@ -103,7 +103,7 @@ class API(object):
         payload.update({'site_id': site_id,
                         'rule_id': 'api.acl.blacklisted_ips',
                         'ips': ip_string})
-        return self.__update_acl(payload)
+        return self.update_acl(payload)
 
     def overwrite_ip_whitelist_acl(self, site_id, ips=[]):
         ip_string = ','.join(ips)
@@ -111,7 +111,7 @@ class API(object):
         payload.update({'site_id': site_id,
                         'rule_id': 'api.acl.whitelisted_ips',
                         'ips': ip_string})
-        return self.__update_acl(payload)
+        return self.update_acl(payload)
 
     def get_site_blacklisted_ips(self, site_id):
         rules = self.get_site_acl(site_id)
