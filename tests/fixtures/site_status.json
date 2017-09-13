@@ -1,0 +1,92 @@
+{
+  "display_name": "test.mysite.test",
+  "dns": [{
+    "dns_record_name": "test.mysite.test",
+    "set_type_to": "CNAME",
+    "set_data_to": ["not.real.incapdns.net"]
+  }],
+  "site_id": 1234567,
+  "active": "active",
+  "original_dns": [{
+    "dns_record_name": "Not Available",
+    "set_data_to": []
+  }],
+  "security": {
+    "waf": {
+      "rules": [{
+        "action": "api.threats.action.alert",
+        "action_text": "Alert Only",
+        "name": "SQL Injection",
+        "id": "api.threats.sql_injection"
+      }, {
+        "action": "api.threats.action.alert",
+        "action_text": "Alert Only",
+        "name": "Cross Site Scripting",
+        "id": "api.threats.cross_site_scripting"
+      }, {
+        "action": "api.threats.action.alert",
+        "action_text": "Alert Only",
+        "name": "Illegal Resource Access",
+        "id": "api.threats.illegal_resource_access"
+      }, {
+        "challenge_suspected_bots": false,
+        "name": "Bot Access Control",
+        "id": "api.threats.bot_access_control",
+        "block_bad_bots": true
+      }, {
+        "activation_mode": "api.threats.ddos.activation_mode.auto",
+        "id": "api.threats.ddos",
+        "name": "DDoS",
+        "ddos_traffic_threshold": 1000,
+        "activation_mode_text": "Auto"
+      }, {
+        "action": "api.threats.action.quarantine_url",
+        "action_text": "Auto-Quarantine",
+        "name": "Backdoor Protect",
+        "id": "api.threats.backdoor"
+      }, {
+        "action": "api.threats.action.alert",
+        "action_text": "Alert Only",
+        "name": "Remote File Inclusion",
+        "id": "api.threats.remote_file_inclusion"
+      }, {
+        "action": "api.threats.action.disabled",
+        "action_text": "Ignore",
+        "name": "IncapRules",
+        "id": "api.threats.customRule"
+      }]
+    },
+    "acls": {
+      "rules": [{
+        "ips": ["198.51.100.0/24"],
+        "name": "Visitors from blacklisted IPs",
+        "id": "api.acl.blacklisted_ips"
+      },
+      {
+        "ips": ["203.0.113.0/24"],
+        "name": "Visitors from whitelisted IPs",
+        "id": "api.acl.whitelisted_ips"
+      },
+      {
+        "geo": {
+          "countries": ["CA"],
+          "continents": ["SA"]
+        },
+        "name": "Visitors from blacklisted Countries",
+        "id": "api.acl.blacklisted_countries"
+      },
+      {
+        "urls": ["super.test.net"],
+        "name": "Visitors from blacklisted URLs",
+        "id": "api.acl.blacklisted_urls"
+      }]
+    }
+  },
+  "ips": ["192.0.2.2"],
+  "sealLocation": {
+    "name": "No seal ",
+    "id": "api.seal_location.none"
+  },
+  "res_message": "OK",
+  "acceleration_level": "advanced"
+}
