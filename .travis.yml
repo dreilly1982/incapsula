@@ -1,0 +1,8 @@
+language: python
+install:
+  - travis_retry pip install -r requirements.txt
+  - travis_retry pip install coveralls
+script:
+  - coverage run --source=incapsula -m nose2.__main__ -v
+after_success:
+  - coveralls
