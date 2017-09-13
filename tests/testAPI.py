@@ -86,8 +86,50 @@ class TestAPI(unittest.TestCase):
         mock_post.side_effect = mocked_requests_post
         api = API()
         payload = api.remove_ip_from_blacklist(1234567, '198.51.100.1')
+        self.assertEqual(payload['rule_id'], 'api.acl.blacklisted_ips')
+        self.assertEqual(payload['site_id'], 1234567)
         self.assertEqual(payload['ips'],
                          '198.51.100.0/32,198.51.100.2/31,198.51.100.4/30,'
                          '198.51.100.8/29,198.51.100.16/28,198.51.100.32/27,'
                          '198.51.100.64/26,198.51.100.128/25')
 
+    @mock.patch('requests.Session.post')
+    def test_send_request(self, mock_post):
+        mock_post.side_effect = mocked_requests_post
+        api = API(url='https://superbeef.com')
+        with self.assertRaisesRegexp(Exception, 'POST https://superbeef.com/sites/list/ 404'):
+            api.get_sites()
+
+    @mock.patch('requests.Session.post')
+    def test_get_site_acl(self, mock_post):
+        mock_post.side_effect = mocked_requests_post
+        api = API(url='noacl')
+        self.assertEqual(api.get_site_acl(1234567), None)
+
+    @mock.patch('requests.Session.post')
+    def test_add_ip_to_whitelist(self, mock_post):
+        mock_post.side_effect = mocked_requests_post
+        api = API()
+        payload = api.add_ip_to_whitelist(1234567, '192.0.2.3')
+        self.assertEqual(payload['ips'], '192.0.2.3/32,203.0.113.0/24')
+
+    @mock.patch('requests.Session.post')
+    def test_remove_ip_from_whitelist(self, mock_post):
+        mock_post.side_effect = mocked_requests_post
+        api = API()
+        payload = api.remove_ip_from_whitelist(1234567, '203.0.113.1')
+        self.assertEqual(payload['rule_id'], 'api.acl.whitelisted_ips')
+        self.assertEqual(payload['site_id'], 1234567)
+        self.assertEqual(payload['ips'],
+                         '203.0.113.0/32,203.0.113.2/31,203.0.113.4/30,'
+                         '203.0.113.8/29,203.0.113.16/28,203.0.113.32/27,'
+                         '203.0.113.64/26,203.0.113.128/25')
+
+    @mock.patch('requests.Session.post')
+    def test_get_black_white_list(self, mock_post):
+        mock_post.side_effect = mocked_requests_post
+        api = API(url='nobwl')
+        self.assertEqual(api.get_site_blacklisted_ips(1234567), None)
+        self.assertEqual(api.get_site_blacklisted_urls(1234567), None)
+        self.assertEqual(api.get_site_blacklisted_countries(1234567), None)
+        self.assertEqual(api.get_site_whitelisted_ips(1234567), None)

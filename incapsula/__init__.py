@@ -161,3 +161,23 @@ class API(object):
         return self.overwrite_ip_blacklist_acl(site_id=site_id,
                                                ips=list(map(str, blacklist_ips.iter_cidrs())))
 
+    def add_ip_to_whitelist(self, site_id, ips):
+        if not isinstance(ips, Iterable) or isinstance(ips, str):
+            ips = [ips]
+        existing_whitelist_str = self.get_site_whitelisted_ips(site_id) if not None else []
+        whitelist_ips = IPSet(existing_whitelist_str)
+        for ip in ips:
+            whitelist_ips.add(ip)
+        return self.overwrite_ip_whitelist_acl(site_id=site_id,
+                                               ips=list(map(str, whitelist_ips.iter_cidrs())))
+
+    def remove_ip_from_whitelist(self, site_id, ips):
+        if not isinstance(ips, Iterable) or isinstance(ips, str):
+            ips = [ips]
+        existing_whitelist_str = self.get_site_whitelisted_ips(site_id) if not None else []
+        whitelist_ips = IPSet(existing_whitelist_str)
+        for ip in ips:
+            whitelist_ips.remove(ip)
+        return self.overwrite_ip_whitelist_acl(site_id=site_id,
+                                               ips=list(map(str, whitelist_ips.iter_cidrs())))
+
