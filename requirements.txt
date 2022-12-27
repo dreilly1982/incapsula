@@ -1,5 +1,5 @@
 netaddr==0.7.19
-setuptools==36.4.0
+setuptools==65.5.1
 urllib3==1.22
 requests==2.18.4
 PyYAML==3.12
